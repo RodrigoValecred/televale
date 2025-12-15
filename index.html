@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>TV FIDC - Rotator</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
+        iframe { width: 100%; height: 100vh; border: none; }
+        /* Esconde barra de rolagem se aparecer */
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+    <iframe id="bi_frame" src="" allowFullScreen="true"></iframe>
+
+    <script>
+        // === ÁREA DE CONFIGURAÇÃO ===
+        
+        // Coloque aqui os links dos seus relatórios
+        // DICA: Adicione '&chromeless=1' (para link público) ou '&navContentPaneEnabled=false' (para link seguro) ao final
+        const dashboards = [
+            "URL_DO_SEU_DASHBOARD_1_AQUI", 
+            "URL_DO_SEU_DASHBOARD_2_AQUI"
+        ];
+
+        const tempoTroca = 30000; // Tempo em milissegundos (30000 = 30 segundos)
+
+        // =============================
+
+        let currentIndex = 0;
+
+        function rodarCarrossel() {
+            const frame = document.getElementById('bi_frame');
+            
+            // Carrega a URL da vez
+            frame.src = dashboards[currentIndex];
+            
+            console.log("Carregando dashboard: " + currentIndex);
+
+            // Prepara o índice para o próximo (volta ao zero se acabar)
+            currentIndex = (currentIndex + 1) % dashboards.length;
+        }
+
+        // Inicia o ciclo
+        rodarCarrossel();
+        setInterval(rodarCarrossel, tempoTroca);
+    </script>
+</body>
+</html>
