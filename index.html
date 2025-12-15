@@ -6,42 +6,65 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
         iframe { width: 100%; height: 100vh; border: none; }
-        /* Esconde barra de rolagem se aparecer */
-        ::-webkit-scrollbar { display: none; }
+        
+        /* Debugger: Uma faixinha discreta no topo para sabermos o status */
+        #debug_info {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(255, 0, 0, 0.7);
+            color: white;
+            font-family: sans-serif;
+            font-size: 14px;
+            padding: 5px;
+            z-index: 9999;
+            pointer-events: none; /* Deixa clicar através dele */
+        }
     </style>
 </head>
 <body>
+    <div id="debug_info">Iniciando sistema...</div>
+
     <iframe id="bi_frame" src="" allowFullScreen="true"></iframe>
 
     <script>
-        // === ÁREA DE CONFIGURAÇÃO ===
-        
-        // Coloque aqui os links dos seus relatórios
-        // DICA: Adicione '&chromeless=1' (para link público) ou '&navContentPaneEnabled=false' (para link seguro) ao final
+        // === LINKS DO POWER BI ===
         const dashboards = [
+            // PÁGINA 1 (Final b487...)
             "https://app.powerbi.com/reportEmbed?reportId=f421a9b8-2513-4995-a6d9-2d67f471b2bb&autoAuth=true&ctid=001f4632-be8f-449f-88e8-037f04cb9e77&chromeless=1&pageName=b487054785dc1036840e", 
+            
+            // PÁGINA 2 (Final 0db1...)
             "https://app.powerbi.com/reportEmbed?reportId=f421a9b8-2513-4995-a6d9-2d67f471b2bb&autoAuth=true&ctid=001f4632-be8f-449f-88e8-037f04cb9e77&chromeless=1&pageName=0db1ba10ecb1bcbf8d27"
         ];
 
-        const tempoTroca = 30000; // Tempo em milissegundos (30000 = 30 segundos)
-
-        // =============================
+        // 5 Minutos (300.000 ms)
+        // Para testar rápido, mude para 10000 (10 seg) e depois volte para 300000
+        const tempoTroca = 300000; 
 
         let currentIndex = 0;
 
         function rodarCarrossel() {
             const frame = document.getElementById('bi_frame');
+            const debug = document.getElementById('debug_info');
             
-            // Carrega a URL da vez
-            frame.src = dashboards[currentIndex];
-            
-            console.log("Carregando dashboard: " + currentIndex);
+            // Pega a URL base
+            let urlBase = dashboards[currentIndex];
 
-            // Prepara o índice para o próximo (volta ao zero se acabar)
+            // TRUQUE ANTI-CACHE: Adiciona um número aleatório no final para forçar reload
+            let urlFinal = urlBase + "&ignoreCache=" + new Date().getTime();
+            
+            // Carrega
+            frame.src = urlFinal;
+            
+            // Atualiza o texto na tela
+            debug.innerText = "Exibindo Dashboard " + (currentIndex + 1) + " de " + dashboards.length + " | Atualizado às: " + new Date().toLocaleTimeString();
+            console.log("Carregando índice: " + currentIndex);
+
+            // Prepara próximo
             currentIndex = (currentIndex + 1) % dashboards.length;
         }
 
-        // Inicia o ciclo
+        // Inicia
         rodarCarrossel();
         setInterval(rodarCarrossel, tempoTroca);
     </script>
